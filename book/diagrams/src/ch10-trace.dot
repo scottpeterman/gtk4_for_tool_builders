@@ -1,0 +1,10 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.3; ranksep=0.32;
+ g [label="GtkGestureClick on the page, capture phase\nright-click claimed", fillcolor="#FFFFFF"];
+ m [label="show_terminal_menu: make the tab current,\nGtkPopoverMenu over a GMenu", fillcolor="#FFFFFF"];
+ a [label="menu item names win.close-tab\nact_close_tab resolves current_tab()", fillcolor="#DCE7F5"];
+ d [label="confirm: dialog shown, function returns", fillcolor="#FFFFFF"];
+ l [label="main loop keeps dispatching", fillcolor="#FFF6DD", color="#B08A2E"];
+ r [label="\"response\": page still in a notebook?", fillcolor="#DCE7F5"];
+ s [label="remove_page → page-removed → ~Tab", fillcolor="#FFFFFF"];
+ g->m [label=" input"]; m->a [label=" command"]; a->d; d->l [label=" no answer yet"]; l->r [label=" user clicks Close"]; r->s [label=" state change"];
+}

@@ -1,0 +1,5 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.35;
+ node [width=1.3];
+ n [label="new\nGtkPopoverMenu"]; p [label="set_parent\n(notebook)", fillcolor="#DCE7F5"]; u [label="popup"]; c [label="\"closed\""]; a [label="chosen item's\naction runs"]; i [label="idle:\nunparent", fillcolor="#FFF6DD", color="#B08A2E"]; f [label="last ref\ngoes: freed"];
+ n->p->u->c->a->i->f;
+}

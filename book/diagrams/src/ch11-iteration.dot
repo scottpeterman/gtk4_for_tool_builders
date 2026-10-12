@@ -1,0 +1,9 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.35; ranksep=0.4;
+ prep [label="prepare\nwho is ready already?\nhighest ready priority", fillcolor="#FFFFFF"];
+ query [label="query\nfds to poll,\ntimeout", fillcolor="#FFFFFF"];
+ poll [label="poll()\nsleep until an fd\nor a timer is ready", fillcolor="#FFF6DD", color="#B08A2E"];
+ check [label="check\nwho is ready now?", fillcolor="#FFFFFF"];
+ disp [label="dispatch\ncallbacks at the\nwinning priority only", fillcolor="#DCE7F5"];
+ prep->query->poll->check->disp;
+ disp->prep [label=" next iteration", constraint=false, style=dashed];
+}

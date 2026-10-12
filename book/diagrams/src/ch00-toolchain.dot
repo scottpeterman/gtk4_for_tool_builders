@@ -1,0 +1,12 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.35; ranksep=0.4;
+ mb [label="meson.build\n(what to build)"];
+ setup [label="meson setup\nbuild-debug", fillcolor="#DCE7F5"];
+ pc [label="pkg-config gtk4\n-I paths, -l libraries", fillcolor="#FFFFFF"];
+ ninja [label="build.ninja", fillcolor="#FFFFFF"];
+ cc [label="compile_commands.json", fillcolor="#FFFFFF"];
+ bin [label="build-debug/gtklab\n-O0 -g", fillcolor="#DCE7F5"];
+ dbg [label="debugger\n(F5: CodeLLDB or gdb)"];
+ ide [label="IntelliSense"];
+ mb->setup; setup->pc [dir=both, label=" asks"]; setup->ninja; setup->cc;
+ ninja->bin [label=" meson compile"]; bin->dbg [label=" debug info:\n lines, variables"]; cc->ide [label=" same flags\n as the compiler"];
+}

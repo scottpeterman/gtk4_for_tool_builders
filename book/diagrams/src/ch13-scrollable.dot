@@ -1,0 +1,10 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.5; ranksep=0.7;
+ sw [label="GtkScrolledWindow\nscrollbar · wheel", fillcolor="#FFFFFF"];
+ adj [label="GtkAdjustment\nlower 0 · upper = lines\npage_size = rows · value = top line", fillcolor="#DCE7F5"];
+ grid [label="GtklabGrid\n(GtkScrollable)"];
+ sw->grid [label=" sets vadjustment"];
+ grid->adj [label=" configure: range"];
+ sw->adj [label=" moves value"];
+ adj->grid [label=" value-changed → queue_draw", style=dashed];
+ adj->sw [label=" draws scrollbar from", style=dashed];
+}

@@ -1,0 +1,15 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.12; ranksep=0.8; compound=true;
+ subgraph cluster_d { label="the data: folders own sessions"; fontsize=11; color="#C9D2DE"; style="rounded";
+  c2 [label="core2-den", fillcolor="#FFFFFF"]; c1 [label="core1-den", fillcolor="#FFFFFF"];
+  local [label="Local"]; core [label="Core", fillcolor="#DCE7F5"]; edge_ [label="Edge"];
+  core->c1; core->c2; }
+ subgraph cluster_r { label="what the list view sees"; fontsize=11; color="#C9D2DE"; style="rounded";
+  r [shape=plaintext, style="", margin="0", label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#5B6B82">
+<tr><td align="left" bgcolor="#EEF2F7">0 · Local · depth 0</td></tr>
+<tr><td align="left" bgcolor="#DCE7F5">1 · Core · depth 0 · expanded</td></tr>
+<tr><td align="left" bgcolor="#FFFFFF">2 · core1-den · depth 1</td></tr>
+<tr><td align="left" bgcolor="#FFFFFF">3 · core2-den · depth 1</td></tr>
+<tr><td align="left" bgcolor="#EEF2F7">4 · Edge · depth 0</td></tr>
+</table>>]; }
+ c1->r [label=" GtkTreeListModel\n flattens", lhead=cluster_r, ltail=cluster_d];
+}

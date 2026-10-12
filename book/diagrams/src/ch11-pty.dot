@@ -1,0 +1,10 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.35; ranksep=0.45;
+ sess [label="PtySession\nmaster fd", fillcolor="#DCE7F5"];
+ ld [label="kernel: line discipline\necho · CR→NL · ^C→SIGINT\nNL→CR NL"];
+ slave [label="/dev/pts/N\nstdin · stdout · stderr", fillcolor="#FFFFFF"];
+ child [label="shell or ssh\nsession leader", fillcolor="#FFFFFF"];
+ sess->ld [label=" write: keys"]; ld->sess [label=" read: output"];
+ ld->slave [dir=both]; slave->child [dir=both];
+ sess->ld [label=" TIOCSWINSZ", style=dashed];
+ ld->child [label=" SIGWINCH, SIGINT", style=dashed, constraint=false];
+}

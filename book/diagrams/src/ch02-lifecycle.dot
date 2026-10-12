@@ -1,0 +1,11 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.3; ranksep=0.3;
+ new [label="gtk_button_new_with_label\nfloating reference, owned by nobody"];
+ sunk [label="gtk_box_append\nbox sinks it: count 1, the box owns it", fillcolor="#DCE7F5"];
+ rem [label="gtk_box_remove\nbox drops its reference: count 0"];
+ disp [label="dispose\ndrop references to other objects", fillcolor="#FFFFFF"];
+ fin [label="finalize\nobject data destroy functions run\n(~Counter)", fillcolor="#FFFFFF"];
+ gone [label="memory freed: a pointer you kept now dangles", fillcolor="#FFF6DD", color="#B08A2E"];
+ new->sunk->rem->disp->fin->gone;
+ ref [label="g_object_ref first?\nthen count stays 1 and the\nwidget survives removal", fillcolor="#FFFFFF", style="rounded,filled,dashed"];
+ rem->ref [style=dashed, label=" unless"];
+}

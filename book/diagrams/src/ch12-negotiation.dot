@@ -1,0 +1,10 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.4;
+ parent [label="parent\n(the page box)", fillcolor="#FFFFFF"];
+ meas [label="measure ×2\nmin 20×5 cells\nnatural 80×24 cells", fillcolor="#DCE7F5"];
+ alloc [label="size_allocate\nwidth × height px", fillcolor="#DCE7F5"];
+ grid [label="update_grid\npx ÷ cell → cols × rows"];
+ sig [label="\"resized\"\n(cols, rows)", fillcolor="#FFFFFF"];
+ pty [label="tab → PtySession\nTIOCSWINSZ", fillcolor="#FFFFFF"];
+ parent->meas [label=" asks"]; meas->parent [label=" answers", style=dashed];
+ parent->alloc [label=" decides"]; alloc->grid; grid->sig [label=" if changed"]; sig->pty;
+}

@@ -1,0 +1,10 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.3; ranksep=0.28;
+ user [label="USER  800\n~/.config/gtk-4.0/gtk.css"];
+ app [label="APPLICATION  600\ngtklab's style.css", fillcolor="#DCE7F5"];
+ set [label="SETTINGS  400\nfrom GtkSettings"];
+ theme [label="THEME  200\nthe GTK theme: error, dim-label, @error_color", fillcolor="#FFFFFF"];
+ within [label="inside one provider:\nmore specific selector wins,\nthen the later rule", fillcolor="#FFF6DD", color="#B08A2E"];
+ user -> app -> set -> theme [label=" if not set above"];
+ {rank=same; app; within;}
+ app -> within [style=dashed, arrowhead=none];
+}

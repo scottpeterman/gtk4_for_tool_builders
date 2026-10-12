@@ -1,0 +1,7 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.5;
+ ev [label="event reaches\na controller", fillcolor="#DCE7F5"];
+ g [label="gesture\n(click, drag)"]; d [label="discrete controller\n(scroll, key)"];
+ cl [label="CLAIMED\nsequence is grabbed;\nother gestures stop seeing it", fillcolor="#FFFFFF"]; de [label="DENIED\nsteps aside;\nthe event carries on", fillcolor="#FFFFFF"];
+ t [label="return TRUE\nhandled: stop here", fillcolor="#FFFFFF"]; f [label="return FALSE\nnot mine: carry on", fillcolor="#FFFFFF"];
+ ev->g; ev->d; g->cl [label=" set_state"]; g->de [label=" set_state"]; d->t; d->f;
+}

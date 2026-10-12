@@ -1,0 +1,12 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.35; ranksep=0.45;
+ name [label="\"gtklab-log-symbolic\"", fillcolor="#DCE7F5"];
+ cur [label="user's icon theme\n(Adwaita)"];
+ inh [label="themes it inherits"];
+ hic [label="hicolor\n+ resource paths\n/io/github/gtklab/icons/"];
+ svg [label="scalable/actions/\ngtklab-log-symbolic.svg\nrecoloured from CSS color", fillcolor="#FFFFFF"];
+ miss [label="image-missing\n(no warning)", fillcolor="#FFF6DD", color="#B08A2E"];
+ {rank=same; name; cur; inh;} {rank=same; svg; hic; miss;}
+ name -> cur -> inh -> hic [label=" not found"];
+ svg -> hic [label=" found", dir=back];
+ hic -> miss [label=" not found"];
+}

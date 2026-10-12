@@ -1,0 +1,6 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.25; ranksep=0.5;
+ node [width=1.8];
+ b [label="close button", fillcolor="#FFFFFF"]; a [label="win.close-tab,\nClose Other Tabs\n(Chapter 10)", fillcolor="#FFFFFF"]; p [label="process exits\n(Chapter 11)", fillcolor="#FFFFFF"]; w [label="window destroyed\n(quit)", fillcolor="#FFFFFF"];
+ rm [label="page leaves\nthe notebook", fillcolor="#DCE7F5"]; sig [label="page-removed\n(page still alive)"]; fin [label="last reference goes:\npage finalized"]; dt [label="~Tab\nreleases everything", fillcolor="#DCE7F5"];
+ b->rm; a->rm; p->rm; w->rm; rm->sig->fin->dt;
+}

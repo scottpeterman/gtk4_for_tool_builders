@@ -1,0 +1,14 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.4;
+ acc [label="every load and store\nin instrumented code", fillcolor="#DCE7F5"];
+ sh [label="shadow byte\n1 per 8 bytes of memory"];
+ ok [label="addressable:\ncontinue", fillcolor="#FFFFFF"];
+ rep [label="poisoned: report\naccess, free, allocation\nstacks; stop", fillcolor="#FFF6DD", color="#B08A2E"];
+ fr [label="free()\n(intercepted everywhere)"];
+ q [label="quarantine\nFIFO, 256 MB"];
+ re [label="reused by\nmalloc()", fillcolor="#FFFFFF"];
+ acc -> sh [label=" check"];
+ sh -> ok; sh -> rep;
+ fr -> q [label=" poison"];
+ q -> re [label=" oldest\n leaves"];
+ q -> sh [style=dashed, arrowhead=none, label=" stays\n poisoned"];
+}

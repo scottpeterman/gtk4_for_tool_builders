@@ -39,6 +39,24 @@ Every directory carries the course's `.vscode/` (CodeLLDB, Inspector,
 fatal-criticals, gdb; from Chapter 4 also unit tests, a scratch config and an
 ASan build).
 
+## Isolated labs
+
+`labs/` holds seven small programs, one idea each, for the chapters that
+benefit from seeing a mechanism with gtklab taken away: layout (3), the
+GTK-free core boundary (4), the list pipeline (5), tree models (6), actions
+(7), tabs that own their state (8), and popovers and dialogs (10). Each
+builds like a chapter, with the same `.vscode/` configurations:
+
+    cd labs/lab06-tree
+    meson setup build-debug --buildtype=debug
+    meson compile -C build-debug
+    ./build-debug/lab
+
+## The book
+
+`book/` is the text, built with pandoc into PDF, HTML and Markdown; see
+`book/README.md`.
+
 ## Requirements
 
 GTK >= 4.8, meson, ninja, a C++17 compiler. From Chapter 14: network access

@@ -1,0 +1,9 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.3; ranksep=0.28;
+ q [label="something changed: text, a child added, the window resized\n→ the widget queues a resize"];
+ fc [label="frame clock: layout phase", fillcolor="#FFF6DD", color="#B08A2E"];
+ m [label="1. measure, bottom up\nevery widget reports minimum and natural size", fillcolor="#DCE7F5"];
+ d [label="each parent applies its own rule\nexpand, align, homogeneous, paned position", fillcolor="#FFFFFF"];
+ a [label="2. allocate, top down\nevery child gets x, y, width, height", fillcolor="#DCE7F5"];
+ p [label="frame clock: paint phase (snapshot)", fillcolor="#FFF6DD", color="#B08A2E"];
+ q->fc->m->d->a->p;
+}

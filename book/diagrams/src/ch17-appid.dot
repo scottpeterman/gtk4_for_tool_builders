@@ -1,0 +1,11 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.45;
+ id [label="gtk_application_new(\n\"io.github.gtklab\")", fillcolor="#DCE7F5"];
+ way [label="Wayland: toplevel app_id\nio.github.gtklab"];
+ x11 [label="X11: WM_CLASS\ngtklab (program name)"];
+ res [label="resource base path\n/io/github/gtklab", fillcolor="#FFFFFF"];
+ desk [label="io.github.gtklab.desktop\nStartupWMClass=gtklab", fillcolor="#DCE7F5"];
+ dock [label="dock / launcher:\none icon per app", fillcolor="#FFF6DD", color="#B08A2E"];
+ id -> way; id -> x11; id -> res;
+ way -> desk [label=" file name"]; x11 -> desk [label=" StartupWMClass"];
+ desk -> dock;
+}

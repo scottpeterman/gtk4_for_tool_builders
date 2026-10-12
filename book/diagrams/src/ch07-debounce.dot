@@ -1,0 +1,6 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.25; ranksep=0.35;
+ t1 [label="toggle\nt = 0 ms", fillcolor="#FFFFFF"]; t2 [label="toggle\nt = 100", fillcolor="#FFFFFF"]; t3 [label="toggle\nt = 200", fillcolor="#FFFFFF"];
+ fire [label="timeout fires\nt = 700", fillcolor="#FFF6DD", color="#B08A2E"];
+ save [label="settings saved\n(once)", fillcolor="#DCE7F5"];
+ t1->t2 [label=" timer\n restarted"]; t2->t3 [label=" timer\n restarted"]; t3->fire [label=" 500 ms\n quiet"]; fire->save;
+}

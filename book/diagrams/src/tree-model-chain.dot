@@ -2,5 +2,5 @@ digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.
  root [label="GListStore\n(folders)", fillcolor="#DCE7F5"]; tlm [label="GtkTreeListModel\nflattens the tree"]; sel [label="GtkSingleSelection"]; view [label="GtkListView\nrows: GtkTreeExpander"];
  ccm [label="create_child_model(folder)\n→ GListStore of sessions", fillcolor="#FFFFFF"];
  root->tlm; tlm->sel [label=" GtkTreeListRow\n items"]; sel->view;
- tlm->ccm [style=dashed, label=" on expand"]; ccm->tlm [style=dashed, label=" children inserted\n after the folder"];
+ tlm->ccm [style=dashed, label=" for each folder row\n (startup, expand)"]; ccm->tlm [style=dashed, label=" children inserted\n after the folder"];
 }

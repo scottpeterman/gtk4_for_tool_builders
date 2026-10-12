@@ -606,9 +606,9 @@ void AppWindow::install_actions(GtkApplication *app) {
     a = g_action_map_lookup_action(G_ACTION_MAP(window_), "app-variant");
     g_simple_action_set_state(G_SIMPLE_ACTION(a), g_variant_new_string(settings_.app_variant.c_str()));
 
-    // 1) Application accelerators: menus display them next to the item.
-    // 2) The same triggers in a capture-phase controller on the window, so
-    //    they run before the focused widget (later, the terminal) sees the key.
+    // 1) Application accelerators: menus show them, and GTK also installs them
+    //    on every window in the capture phase, ahead of the focused widget.
+    // 2) The same triggers in a capture-phase controller we own and can read.
     GtkEventController *shortcuts = gtk_shortcut_controller_new();
     gtk_event_controller_set_propagation_phase(shortcuts, GTK_PHASE_CAPTURE);
     for (const Accel &acc : kAccels) {

@@ -1,0 +1,7 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.45;
+ key [label="key press\nCtrl+Shift+B", fillcolor="#FFFFFF"];
+ cap [label="window, capture phase\napplication accels\n+ gtklab's controller", fillcolor="#DCE7F5"];
+ act [label="win.toggle-sidebar\nruns once"];
+ focus [label="focused widget\nentry, list, terminal", fillcolor="#FFFFFF"];
+ key->cap; cap->act [label=" matches:\n handled, stop"]; cap->focus [label=" no match:\n keep going", style=dashed];
+}

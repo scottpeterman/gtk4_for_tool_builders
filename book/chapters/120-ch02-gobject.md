@@ -8,7 +8,44 @@ dies when the object does. Almost every hard bug in a GTK program is one of
 those three going wrong, and this chapter builds a tiny program that shows
 all three working, and then breaks them on purpose.
 
-## The idea
+::: {.box title="In this chapter"}
+- Tell an owning reference from a borrowed pointer, and say who owns each
+  widget in a window.
+- Predict when a widget is destroyed, and what that does to pointers you
+  kept.
+- Connect a signal handler that cannot be called with a dead pointer.
+- Make a widget own a C++ object, so the object is deleted when the widget
+  is.
+:::
+
+## Concepts
+
+### An object system written in C
+
+GTK's API looks like a collection of C functions, but behind it is a
+runtime type system. Most of what you handle derives from `GObject`, which
+supplies four things C does not have: a runtime type, reference-counted
+lifetime, signals, and named properties. Every widget is a GObject; not
+every GObject is a widget. The type chains for this chapter's objects, as
+GLib reports them:
+
+| Object | Type chain |
+|---|---|
+| a button | `GtkButton` → `GtkWidget` → `GInitiallyUnowned` → `GObject` |
+| a window | `GtkWindow` → `GtkWidget` → `GInitiallyUnowned` → `GObject` |
+| the application | `GtkApplication` → `GApplication` → `GObject` |
+
+The compiler knows none of this. A cast macro such as `GTK_BOX(widget)` or
+`G_OBJECT(button)` is a checked cast at run time: it creates nothing and
+takes no reference, and if the object is not of that type GLib prints a
+critical warning naming the type it expected. That check is often the only
+evidence of a lifetime bug, as the second Break it shows.
+
+Properties are the fourth piece. A property is a named, typed value on an
+object (a paned's `position`, a stack's `visible-child-name`) that can be
+read and set by name with `g_object_get` and `g_object_set`. The GTK
+Inspector is built on them, which is why Chapter 3's drill can change a
+paned's position by typing a number.
 
 ### Reference counting, and the floating reference
 
@@ -17,10 +54,11 @@ Every GObject has a reference count. `g_object_ref` adds one,
 destroyed. That is the whole rule, and it is the rule for application
 objects, models and settings objects.
 
-Widgets add one twist. A new widget starts with a **floating** reference: a
-reference that nobody owns yet. The first container you add it to *sinks*
-that reference and becomes the owner. So this code has no leak and no
-unref, because the box owns the button and the window owns the box:
+Widgets add one twist, which is what `GInitiallyUnowned` in the table means.
+A new widget starts with a **floating** reference: a reference that nobody
+owns yet. The first container you add it to *sinks* that reference and
+becomes the owner. So this code has no leak and no unref, because the box
+owns the button and the window owns the box:
 
 ```cpp
 GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
@@ -33,7 +71,32 @@ The consequence is the part that matters: **removing a widget from its
 parent destroys it**, unless you took a reference of your own first. A
 pointer you kept to it is then a pointer to freed memory.
 
-![Who owns what in this chapter's program. Solid arrows own a reference; the dashed arrow is a signal connection that is broken automatically when the counter button is destroyed.](diagrams/ownership.svg)
+Windows are the exception to the parent rule, because they have no parent.
+A new window is not floating: GTK keeps it in its list of toplevel windows,
+and closing the window is what releases it.
+
+A pointer in your code says nothing about which of these cases it is. The
+question to ask of every one is whether it represents a reference you own:
+
+| Where the pointer came from | What you hold | What you must do |
+|---|---|---|
+| `gtk_application_new`, `g_key_file_new` | a full reference | unref it when done |
+| `gtk_button_new`, any widget constructor | a floating reference | give it to a parent |
+| `gtk_widget_get_parent`, `g_object_get_data` | a borrowed pointer | nothing; do not keep it past the owner |
+| `user_data` in a handler | whatever you passed at connect time | make sure it outlives the connection |
+
+### Destruction in two steps
+
+When the last reference goes, GObject destroys an object in two steps.
+**Dispose** drops the object's references to other objects; for a widget
+that includes its children, which is how removing a box destroys everything
+inside it. **Finalize** frees the object itself, and on the way it clears
+the data attached to the object, calling each destroy function.
+
+![The life of the counter button. Appending sinks its floating reference; removing it drops the count to zero, and finalize runs the destroy function that deletes the `Counter`.](diagrams/ch02-lifecycle.svg)
+
+The Debugger drill shows the second step from the inside: `~Counter` is
+called from `g_datalist_clear` inside `g_object_unref`.
 
 ### Signals
 
@@ -43,6 +106,13 @@ A signal is a named event on an object: `clicked` on a button,
 when the object emits the signal GObject calls your function with the object,
 the signal's own arguments, and your `user_data` pointer.
 
+Emission is synchronous. `g_signal_emit` calls every connected handler, in
+order, before it returns; there is no queue. GObject also holds a reference
+to the emitting object for the whole emission. In a test where a `clicked`
+handler dropped the button's last reference, the button was finalized only
+after the handler returned and before `g_signal_emit` did. The emitter is
+always alive inside its own handlers; other objects are not.
+
 That `user_data` pointer is where lifetime bugs come from. GObject stores it
 and hands it back; it does not know what it points at and does not keep it
 alive. If it points at something that is destroyed before the signal fires,
@@ -51,7 +121,19 @@ your handler gets a dangling pointer.
 `g_signal_connect_object` is the fix for the most common case, where
 `user_data` is itself a GObject. It ties the connection to that object's
 lifetime: when the object is destroyed, the handler is disconnected, so it
-can never be called with a dead pointer.
+can never be called with a dead pointer. It protects that one object only.
+Anything else the handler reaches through it still needs its own answer to
+"who keeps this alive?".
+
+| Connection | `user_data` is | Safe when |
+|---|---|---|
+| `g_signal_connect` | anything | `user_data` outlives the emitting object, or you disconnect first |
+| `g_signal_connect_object` | a GObject | always, for that object |
+| `g_signal_connect` with `nullptr` | nothing | always; the handler finds its state on the emitter |
+
+The third row is this chapter's counter button: its handler takes no
+`user_data` at all and finds its state on the object that emitted the
+signal, which cannot be dead while it is emitting.
 
 ### Data attached to objects
 
@@ -60,6 +142,12 @@ data to any GObject, with a function to call when the object is destroyed (or
 the key is replaced). It is how a widget can own a C++ object: attach it,
 and give `delete` as the destroy function. You will use exactly this in
 Chapter 8 to make a notebook page own everything behind its tab.
+
+This is the bridge between the two lifetime systems in a GTK program written
+in C++. C++ objects live by scope and `unique_ptr`; GObjects live by
+reference count. Attaching a C++ object to a GObject with a destroy function
+makes the reference count decide when the destructor runs, so you never
+have to find the right moment to `delete` it yourself.
 
 ## Build
 
@@ -141,8 +229,50 @@ is about the time this goes wrong at quit.
 deleting a `Tab` closes a pty and a log file.
 :::
 
-::: {.box title="Check yourself"}
-Who owns a widget after `gtk_box_append`? When does the destroy function
-given to `g_object_set_data_full` run? What does `g_signal_connect_object`
-protect against that `g_signal_connect` does not?
-:::
+## Review
+
+1. `gtk_box_append(box, button)` is followed by no `g_object_unref`. Why is
+   that not a leak, and what would an unref there do?
+2. Why does `on_remove_clicked` look up the parent before calling
+   `gtk_box_remove`, and why must it not use `count` after the call?
+3. A window has no parent. What keeps it alive, and what releases it?
+4. In the Debugger drill, `~Counter` is called from `g_object_unref`. Trace
+   the chain from the click on Remove to that destructor.
+5. The counter button's handler is connected with `nullptr` as `user_data`.
+   Why is that the safest of the three connection styles?
+6. `g_signal_connect_object` protects the remove button's handler. Exactly
+   which pointer does it protect, and what would it not protect?
+7. With plain `g_signal_connect`, a second click on Remove produced
+   `invalid unclassed pointer in cast to 'GtkWidget'` and ASan said nothing.
+   Which part of GObject caught the bug, and why could ASan not?
+8. You need the counter button again after removing it, to put it in a
+   different box. What do you do before `gtk_box_remove`, and what do you
+   owe afterwards?
+
+**Questions for deeper thought.** Would you store a device inventory on the
+list widget that shows it, or in a separate object? What happens to that
+choice when a background operation finishes after the widget has been
+removed? If every C++ object in a tool is owned by some GObject through
+attached data, what does the ownership tree look like, and where would you
+look first for a leak?
+
+## Exercises
+
+1. **Two counters.** In `on_activate` in `ch02-gobject/src/main.cpp`, add a
+   second counter button with its own `Counter` and its own remove button.
+   Done when removing one prints only its own `Counter freed after N clicks`
+   and the other keeps counting.
+2. **Keep it alive.** Change `on_remove_clicked` to take a reference with
+   `g_object_ref` before removing the counter, and append it back to the box
+   from a third "Restore" button, then unref it. Done when the count
+   survives a remove and restore, and `~Counter` runs only when the window
+   closes.
+3. **Watch the two steps.** In `on_activate`, register a weak reference on
+   the counter button with `g_object_weak_ref`, using a capture-less lambda
+   that prints `weak notify`. Done when Remove prints `weak notify` before
+   `Counter freed after N clicks`, and you can say which of dispose and
+   finalize each line comes from.
+4. **A weak pointer.** Store the counter button in a `static GtkWidget *`
+   and register it with `g_object_add_weak_pointer`. Add a button that
+   prints whether the pointer is null. Done when it prints non-null before
+   Remove and null after, with no crash.

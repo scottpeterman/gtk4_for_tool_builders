@@ -1,0 +1,8 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.4;
+ item [label="menu item or button\naction-name win.reload", fillcolor="#FFFFFF"];
+ parents [label="its parents\nbox, paned, popover…"];
+ win [label="GtkApplicationWindow\nwin.quit · win.reload\nwin.toggle-sidebar · win.app-variant", fillcolor="#DCE7F5"];
+ app [label="GtkApplication\napp.*"];
+ none [label="no match:\nitem insensitive, no warning", fillcolor="#FFF6DD", color="#B08A2E"];
+ item->parents [label=" not here"]; parents->win [label=" not here"]; win->app [label=" not win."]; app->none [label=" not app."];
+}

@@ -1,0 +1,14 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.35; ranksep=0.4;
+ alive [label="alive\nrefcount > 0"];
+ disp [label="dispose\n\"destroy\" emitted,\nhandlers dropped,\nweak refs notified", fillcolor="#DCE7F5"];
+ fin [label="finalize\nobject data\ndestroy fns run"];
+ gone [label="freed memory", fillcolor="#FFFFFF", style="rounded,filled,dashed"];
+ b1 [label="use during destruction\nevidence: CRITICAL\ntool: fatal-criticals", fillcolor="#FFF6DD", color="#B08A2E"];
+ b2 [label="use after free\nevidence: none, or a crash later\ntool: ASan", fillcolor="#FFF6DD", color="#B08A2E"];
+ {rank=same; alive; disp; fin; gone;}
+ alive -> disp [label=" last ref goes, or\n run_dispose"];
+ disp -> fin [label=" no refs\n left"];
+ fin -> gone [label=" memory\n freed"];
+ disp -> b1 [style=dashed, arrowhead=none];
+ gone -> b2 [style=dashed, arrowhead=none];
+}

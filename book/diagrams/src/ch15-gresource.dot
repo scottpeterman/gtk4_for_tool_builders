@@ -1,0 +1,16 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.35; ranksep=0.45;
+ xml [label="gtklab.gresource.xml\n+ files in data/", fillcolor="#FFFFFF"];
+ gen [label="gtklab-resources.c\n(bytes + constructor)"];
+ bin [label="gtklab binary\n.gresource.gtklab section", fillcolor="#DCE7F5"];
+ reg [label="bundle registered\nbefore main()", fillcolor="#FFF6DD", color="#B08A2E"];
+ css [label="GtkCssProvider\nstyle.css", fillcolor="#FFFFFF"];
+ ico [label="GtkIconTheme\nicons/…", fillcolor="#FFFFFF"];
+ thm [label="g_resources_lookup_data\nthemes/*.ini → parse_theme", fillcolor="#FFFFFF"];
+ {rank=same; xml; gen; bin;} {rank=same; css; ico; thm;}
+ xml -> gen [label=" glib-compile-\n resources"];
+ gen -> bin [label=" compiled\n and linked"];
+ bin -> reg [label=" run"];
+ reg -> css [label=" load_from_resource"];
+ reg -> ico [label=" resource path"];
+ reg -> thm [label=" your code"];
+}

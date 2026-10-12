@@ -1,0 +1,10 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.4; ranksep=0.9;
+ browse [label="browsing\nthe user's folders open", fillcolor="#DCE7F5"];
+ search [label="searching\nevery match open"];
+ saved [label="user_expanded_\nfolder names", fillcolor="#FFFFFF", shape=cylinder, style="filled"];
+ browse->search [label=" first character:\n capture_expanded()"];
+ search->search [label=" more typing:\n rebuild, expand all"];
+ search->browse [label=" cleared: rebuild,\n re-open saved names"];
+ browse->saved [style=dashed, arrowhead=none]; 
+ {rank=same; browse; saved}
+}

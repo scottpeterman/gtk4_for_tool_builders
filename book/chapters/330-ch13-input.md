@@ -12,39 +12,157 @@ Which phase do the page's right-click and zoom controllers run in, and why
 pty watch run, and why (Chapter 11)?
 :::
 
-## The idea: a scrollable widget
+::: {.box title="In this chapter"}
+- Implement `GtkScrollable` and keep a pair of adjustments in step with a
+  model whose unit you choose.
+- Decide when new output should move the view and when it must leave the
+  user where they are.
+- Turn key presses into the bytes a terminal sends, and say which bytes the
+  kernel changes on the way to the shell.
+- Select text with a drag gesture, and copy and paste through the
+  asynchronous clipboard without outliving the widget.
+:::
 
-A `GtkScrolledWindow` can scroll any child, but it can scroll a child in two
-ways. A child that is simply bigger than the viewport is drawn whole and
-moved; that is wasteful for a terminal with thousands of lines of history.
-A child that implements the **`GtkScrollable`** interface is given two
-`GtkAdjustment` objects instead, one per direction, and draws only what the
-adjustment says is visible. An adjustment is a value with a range: `lower`,
-`upper`, `page_size` and the current `value`. The scrolled window draws its
-scrollbar from them and moves `value` when the user scrolls; the widget keeps
-the range current and redraws when `value` changes.
+## Concepts
 
-The units are the widget's choice. GtklabGrid uses lines: `upper` is the
-number of lines held, scrollback and screen together; `page_size` is the
-number of rows on screen; `value` is the first line shown.
+### Two ways to scroll
+
+A `GtkScrolledWindow` can scroll any child, but it scrolls a child in one of
+two ways. A child that does not implement **`GtkScrollable`** is wrapped in a
+`GtkViewport` (a test program that put a label in a scrolled window got a
+`GtkViewport` back from `gtk_scrolled_window_get_child`): the child is
+allocated its full size, drawn whole, and moved. That is wasteful for a
+terminal with thousands of lines of history. A child that implements
+`GtkScrollable` is given the scrolled window's two `GtkAdjustment` objects
+instead, one per direction, is allocated the visible area (or its minimum
+size, if that is larger), and draws only what the adjustment says is
+visible. A text view works this way, and
+from this chapter so does the grid.
+
+### The adjustment is a contract
+
+An adjustment is a value with a range: `lower`, `upper`, `page_size` and the
+current `value`, plus the step and page increments for moving by a line or
+a page. It belongs to neither side. The scrolled window draws
+its scrollbar from it and moves `value` when the user drags the bar or turns
+the wheel; the widget keeps the range current and redraws when `value`
+changes.
+
+![The GtkScrollable contract. The scrolled window hands the grid an adjustment; the grid sets the range; either side can move the value, and the grid redraws when it moves.](diagrams/ch13-scrollable.svg)
+
+The units are the widget's choice, and the choice shapes everything after
+it. GtklabGrid uses lines:
+
+| Field | In GtklabGrid | Who changes it |
+| --- | --- | --- |
+| `lower` | 0, the oldest line kept | the grid |
+| `upper` | lines held, scrollback and screen together | the grid, as lines arrive or are trimmed |
+| `page_size` | rows on screen | the grid, on resize |
+| `value` | the first line shown | the scrolled window (wheel, scrollbar), the grid (follow, typing) |
+
+Pixels would work too, and a text view uses them, because its lines are of
+different heights. A terminal's lines are all one cell high, and in lines the
+arithmetic stays whole: the first line drawn is `value`, a click at pixel
+`y` is on line `value + y / cell_height`, and a selection can be stored in
+absolute line numbers that do not change when the view scrolls.
+
+The contract has one rule that is easy to miss: the scrolled window cannot
+know that the content grew. Every change to the number of lines must go back
+into the adjustment, or the scrollbar describes a document that no longer
+exists; this chapter's Break it shows exactly that. And because both sides
+can move `value`, the widget must decide when moving it is its business.
+New output follows the bottom only if the user was already there; a key
+press always returns to the bottom, as in every terminal.
 
 Implementing an interface is declared in the type definition, with
 `G_DEFINE_FINAL_TYPE_WITH_CODE` and `G_IMPLEMENT_INTERFACE`.
 `GtkScrollable` declares four properties (`hadjustment`, `vadjustment`,
 `hscroll-policy`, `vscroll-policy`); an implementation overrides them in
-`class_init` and stores what it is given.
+`class_init` and stores what it is given. The scrolled window sets them
+when the grid becomes its child.
 
-## The idea: keys become bytes
+### Keys become bytes
 
-Keys reach a focused widget through a `GtkEventControllerKey`. The grid turns
-each key into the bytes a terminal sends for it, Return into `\r`, the up
-arrow into `ESC [ A`, Ctrl+C into byte 3, and hands them out through a
-`commit` signal. The grid never writes to the pty itself; the tab connects
-`commit` to the session. Keeping the widget ignorant of where its bytes go is
-what lets Chapter 14 swap it out.
+A key press reaches a widget as a **keyval**, GDK's name for the symbol the
+key produces with the current layout and Shift already applied (`a`, `A`,
+`Return`, `Up`), together with the state of the modifiers. A terminal sends
+neither: it sends bytes, the ones a hardware terminal would have sent for
+that key. Printable keys become their UTF-8 text; Return becomes a carriage
+return; Ctrl with a letter becomes a control character, `a` as 1 through `z`
+as 26; keys with no character, like the arrows, become escape sequences.
 
-The window's capture-phase shortcut controller from Chapter 7 runs before
+The grid gets keys from a `GtkEventControllerKey` and hands the bytes out
+through its `commit` signal. The grid never writes to the pty itself; the
+tab connects `commit` to the session. Keeping the widget ignorant of where
+its bytes go is what lets Chapter 14 swap it out, and what would let the
+same widget sit on an ssh channel or a test harness.
+
+![A key on its way to the shell. The window's shortcuts see it first; only a key that is not a shortcut becomes bytes, and the kernel changes some of those bytes again.](diagrams/ch13-keys.svg)
+
+Chapter 11's line discipline does the rest, and it explains choices that
+look arbitrary from inside the widget. Return sends `\r`, because that is what a
+terminal's Return key sends. A program reading lines, such as `cat`, gets
+`\n`, because the line discipline turns carriage return into newline on
+input; bash at its prompt switches that off and reads the `\r` itself.
+Backspace sends byte 127, because that is the pty's erase character. Ctrl+C
+sends byte 3, and the kernel, not the grid, turns it into `SIGINT`. And the
+grid never draws what you type: the echo comes back through the pty as
+output, from the line discipline or the shell. A paste follows the same
+path, which is why the grid replaces each newline in pasted text with `\r`,
+the byte Return sends.
+
+The mapping is where a toy and a real terminal part ways:
+
+| Key | GtklabGrid sends | gtkpyte sends |
+| --- | --- | --- |
+| Return | `\r` | `\r` |
+| Backspace | byte 127 | byte 127; Ctrl+Backspace sends byte 8 |
+| Ctrl+C | byte 3 | byte 3 |
+| Up | `ESC [ A` | `ESC [ A`, or `ESC O A` when the application asked for cursor-key mode; `ESC [ 1 ; 5 A` with Ctrl |
+| Alt+b | `b` (Alt is ignored) | `ESC b` |
+| Page Up, F5, Shift+Tab | nothing: the key is not handled | `ESC [ 5 ~`, `ESC [ 15 ~`, `ESC [ Z` |
+
+The last column depends on state the application set by sending escape
+sequences, which GtklabGrid skips and gtkpyte tracks. That is Chapter 14's
+subject.
+
+Neither widget creates an input method context (`GtkIMContext`), which is
+how GTK delivers text composed from several keys, such as accented letters
+from a compose key or Chinese and Japanese input. Both see key presses only.
+For a tool aimed at network engineers typing ASCII commands, that is a
+reasonable cut; for a general-purpose terminal it is a gap.
+
+### Who sees a key first
+
+Chapter 9's propagation decides which keys reach the grid at all. The
+window's shortcut controller from Chapter 7 runs in the capture phase, before
 the grid's key controller, so gtklab's own shortcuts never become bytes.
+That gives a terminal a policy question every terminal answers the same way:
+the plain Ctrl combinations belong to the program in the terminal (Ctrl+C
+interrupts, Ctrl+V is a literal-next in the shell), so the application's own
+commands live on Ctrl+Shift. Copy, Paste and Select All here are
+Ctrl+Shift+C, V and A.
+
+### Selection and the clipboard
+
+A selection is model state like any other: two cell positions, where the
+drag started and where the pointer is now. `snapshot` reads it to paint a
+translucent band under the text, and copying reads the same cells back out
+as text. A `GtkGestureDrag` supplies the positions: a start point on
+`drag-begin` and an offset from it on each `drag-update`. Nothing about the
+selection is stored in pixels, so scrolling or a new frame cannot disturb it.
+
+The clipboard is not yours. Reading it is asynchronous, because the content
+may belong to another program and getting it takes a round trip through the
+display server. Any asynchronous call raises the question Chapter 11's
+deferred calls raised: will the object that asked still exist when the
+answer comes?
+
+There are two clipboards on Linux desktops. The **clipboard** is what
+Ctrl+Shift+C and Ctrl+Shift+V use. The **primary selection** holds whatever
+was last selected and is pasted with the middle button. GtklabGrid uses only
+the first; gtkpyte also puts every selection on the primary selection and
+pastes it on a middle-click.
 
 ## Build
 
@@ -145,8 +263,8 @@ instead of running it.
 
 ::: {.box title="Debugger drill"}
 Set a breakpoint in `on_key_pressed`, focus a grid, and press Ctrl+Shift+Q.
-gtklab quits and the breakpoint is never hit: the window's capture-phase
-shortcut controller handled the key before the grid saw it. The scratch
+gtklab quits and the breakpoint is never hit: a capture-phase shortcut on
+the window (Chapter 7 installs two) handled the key before the grid saw it. The scratch
 config's log shows the same thing: no `grid key` line after the keypress.
 :::
 
@@ -181,8 +299,55 @@ triple-click), `on_scroll`, `on_key_pressed`, and the adjustment properties
 in `gtkpyte_terminal_class_init`.
 :::
 
-::: {.box title="Check yourself"}
-What do an adjustment's `upper`, `page_size` and `value` mean for the grid?
-Why does the grid emit `commit` instead of writing to the pty? Why does the
-paste request hold a reference?
-:::
+## Review
+
+1. The grid holds 5,000 lines of scrollback above a screen of 27 rows, and
+   the view is at the bottom. What are the adjustment's `lower`, `upper`,
+   `page_size` and `value`?
+2. In the Break it, the view stays on lines 1 to 27 however far you scroll.
+   Which side of the adjustment contract was broken, and why can the
+   scrolled window not notice by itself?
+3. New output follows the bottom only if the view was already there, but a
+   key press always returns to the bottom. Why the difference?
+4. Why are lines a better unit than pixels for a terminal's adjustment, and
+   why is a text view's adjustment in pixels?
+5. You press Return in the grid. Which byte does the grid send, which byte
+   does `cat` receive, and what changed it? Why does bash at its prompt see
+   something different?
+6. With a grid focused, Ctrl+Shift+Q quits gtklab and the grid's key
+   handler never runs. Why, and why do terminals put their own commands on
+   Ctrl+Shift rather than plain Ctrl?
+7. A user pastes and closes the tab before the clipboard answers. What does
+   the reference held by the paste request prevent?
+8. Pasting three lines ran three commands. Which code made that happen, and
+   what does bracketed paste change?
+
+**Questions for deeper thought.** If one of your tools showed a 100,000-line
+device log, which unit would you choose for its adjustment, and what would
+the choice make easy or hard? Neither widget uses an input method: who uses
+your tools, and does that matter for them? The `commit` signal can have more
+than one listener; what could a second one do in a tool for network work,
+such as recording a session for replay or typing the same command into
+several tabs, and what would you have to guard against?
+
+## Exercises
+
+1. **Page through history.** In `on_key_pressed`
+   (`ch13-input/src/gtklab_grid.cpp`), make Shift+Page Up and Shift+Page
+   Down move the vertical adjustment by `rows` lines and return `TRUE`
+   without emitting `commit`. Done when, after `seq 1 300`, Shift+Page Up
+   shows earlier lines and the scratch config's log shows no `grid key` line
+   for those presses.
+2. **Alt as Escape.** In `on_key_pressed`, prefix the bytes with ESC when
+   Alt is held, as gtkpyte's `encode_key` does. Done when Alt+B at a bash
+   prompt moves the cursor back one word.
+3. **Double-click a word.** In `gtklab_grid_init`, add a `GtkGestureClick`
+   for the primary button; on a press with `n_press == 2`, select the run of
+   non-blank cells under the pointer. Done when a double-click highlights
+   exactly one word and Ctrl+Shift+C copies just that word.
+4. **The primary selection.** When a drag ends with a selection, put its
+   text on `gtk_widget_get_primary_clipboard`; on a middle-button press,
+   read the primary selection asynchronously, holding a reference as
+   `gtklab_grid_paste_clipboard` does, and emit it through `commit`. Done
+   when text selected in one tab is pasted into another by a middle-click.
+

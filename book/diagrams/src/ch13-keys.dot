@@ -1,0 +1,9 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.35;
+ key [label="key press\nkeyval + modifiers", fillcolor="#FFFFFF"];
+ win [label="window shortcuts\n(capture phase)", fillcolor="#FFFFFF"];
+ grid [label="grid key controller\nkeyval → bytes", fillcolor="#DCE7F5"];
+ tab [label="\"commit\" → tab\nPtySession::write"];
+ ld [label="line discipline\n\\r→\\n · ^C→SIGINT · echo"];
+ child [label="shell", fillcolor="#FFFFFF"];
+ key->win; win->grid [label=" not a shortcut"]; grid->tab; tab->ld; ld->child;
+}

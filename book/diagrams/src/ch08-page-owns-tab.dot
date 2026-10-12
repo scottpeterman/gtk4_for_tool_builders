@@ -1,0 +1,11 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.4; ranksep=0.45;
+ nb [label="GtkNotebook\n(the list of tabs)"];
+ page [label="page: GtkScrolledWindow", fillcolor="#DCE7F5"];
+ view [label="GtkTextView\n(Chapter 14: the terminal)"];
+ lbl [label="tab label box:\nname + close button", fillcolor="#FFFFFF"];
+ tab [label="struct Tab\nsession; later zoom, pty, log", fillcolor="#FFFFFF", style="rounded,filled,dashed"];
+ nb->page [label=" append_page"]; nb->lbl [label=" tab label"]; page->view [label=" set_child"];
+ page->tab [label=" object data:\n destroy fn deletes it"];
+ tab->view [style=dotted, label=" borrowed\n pointer", constraint=false];
+ lbl->page [style=dashed, color="#B0533C", fontcolor="#B0533C", label=" close: signal_connect_object\n on the page", constraint=false];
+}
