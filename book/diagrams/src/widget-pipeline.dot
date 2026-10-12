@@ -1,0 +1,7 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.35; ranksep=0.45;
+ font [label="set_font(…)", fillcolor="#FFFFFF"]; feed [label="feed(bytes)", fillcolor="#FFFFFF"];
+ qr [label="gtk_widget_queue_resize"]; qd [label="gtk_widget_queue_draw"];
+ fc [label="frame clock\n(next frame)", fillcolor="#FFF6DD", color="#B08A2E"];
+ lay [label="layout\nmeasure → size_allocate", fillcolor="#DCE7F5"]; paint [label="paint\nsnapshot", fillcolor="#DCE7F5"]; gpu [label="render", fillcolor="#FFFFFF"];
+ font->qr->fc; feed->qd->fc; fc->lay [label=" if resize queued"]; lay->paint; fc->paint [label=" draw only"]; paint->gpu;
+}

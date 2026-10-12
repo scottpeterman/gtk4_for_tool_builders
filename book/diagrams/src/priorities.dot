@@ -1,0 +1,7 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.2; ranksep=0.12; node [width=5.6, fixedsize=false];
+ a [label="G_PRIORITY_DEFAULT  0\nevents from the window system · g_timeout_add · g_unix_fd_add", fillcolor="#FFFFFF"];
+ b [label="G_PRIORITY_HIGH_IDLE  100", fillcolor="#FFFFFF"];
+ c [label="GDK_PRIORITY_REDRAW  120\nGTK's frame: layout and paint", fillcolor="#FFF6DD", color="#B08A2E"];
+ d [label="G_PRIORITY_DEFAULT_IDLE  200\ng_idle_add · gtklab's pty watch (g_unix_fd_add_full)", fillcolor="#DCE7F5"];
+ a->b->c->d [arrowhead=none, style=invis];
+}

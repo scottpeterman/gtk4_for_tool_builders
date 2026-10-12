@@ -1,0 +1,28 @@
+:root { --fg: #1d1f23; --muted: #626872; --bg: #ffffff; --code-bg: #f6f7f9; --link: #1f4fa3; --rule: #e3e5e8; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e4e6ea; --muted: #9aa1ab; --bg: #16181c; --code-bg: #1f2228; --link: #8ab4ff; --rule: #2c3038; }
+}
+html { background: var(--bg); }
+body { color: var(--fg); background: var(--bg); font: 17px/1.6 "Iowan Old Style", "Palatino Linotype", Palatino, "TeX Gyre Pagella", Georgia, serif; max-width: 46em; margin: 0 auto; padding: 1.5em 16px 4em; }
+h1, h2, h3, h4, nav, .codesource, figcaption, table { font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 2em; line-height: 1.2; margin-top: 1.2em; }
+h2 { font-size: 1.4em; margin-top: 1.8em; border-bottom: 1px solid var(--rule); padding-bottom: .2em; }
+h3 { font-size: 1.12em; margin-top: 1.5em; }
+a { color: var(--link); }
+code { font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; font-size: .86em; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.4; font-size: .92em; }
+.codesource { font-size: .75em; color: var(--muted); margin: 1.2em 0 -.6em; }
+figure { margin: 1.5em 0; }
+figure img, p img { max-width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 4px; }
+figcaption { font-size: .85em; color: var(--muted); margin-top: .4em; }
+table { border-collapse: collapse; font-size: .9em; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border-bottom: 1px solid var(--rule); padding: .35em .7em; text-align: left; vertical-align: top; }
+blockquote { margin: 1em 0; padding: .2em 1em; border-left: 3px solid var(--link); color: var(--muted); }
+nav#TOC ul { list-style: none; padding-left: 1em; }
+nav.sitenav { display: flex; justify-content: space-between; gap: 1em; font-size: .9em; margin: 2em 0; padding-top: 1em; border-top: 1px solid var(--rule); }
+.callout { background: var(--code-bg); border-left: 3px solid var(--link); padding: .6em 1em; margin: 1.2em 0; border-radius: 0 6px 6px 0; }
+.callout > p:first-child { margin-top: 0; }
+.callout > p:last-child { margin-bottom: 0; }
+.box { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: .2em 1em .4em; margin: 1.4em 0; }
+.box .boxtitle { font-family: "IBM Plex Sans", system-ui, sans-serif; font-weight: 600; font-size: .85em; color: var(--link); margin-top: .6em; }
+.box pre { background: var(--bg); }

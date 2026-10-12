@@ -1,0 +1,6 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.3; ranksep=0.6;
+ menu [label="menu item \"Show Sidebar\"\nGMenu: win.toggle-sidebar", fillcolor="#FFFFFF"]; key [label="shortcut\nCtrl+Shift+B", fillcolor="#FFFFFF"]; btn [label="any widget with an\naction-name, e.g. a button", fillcolor="#FFFFFF"];
+ act [label="GSimpleAction toggle-sidebar\non the window (win.)\nstate: true / false", fillcolor="#DCE7F5"];
+ cb [label="one callback\nact_toggle_sidebar"];
+ menu->act; key->act; btn->act; act->cb [label=" activate /\n change-state"];
+}

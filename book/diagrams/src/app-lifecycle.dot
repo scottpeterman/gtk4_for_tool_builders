@@ -1,0 +1,12 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.3; ranksep=0.32;
+ main [label="main()"];
+ new [label="gtk_application_new(id, flags)"];
+ run [label="g_application_run(app, argc, argv)", fillcolor="#DCE7F5"];
+ startup [label="\"startup\"  (once)", fillcolor="#FFFFFF"];
+ activate [label="\"activate\"  → on_activate: build window, present", fillcolor="#FFFFFF"];
+ loop [label="main loop: events, timeouts, I/O, redraws\n(every callback you write runs from here)", fillcolor="#FFF6DD", color="#B08A2E"];
+ last [label="last window closed", fillcolor="#FFFFFF"];
+ ret [label="run returns exit status → g_object_unref(app)"];
+ main->new->run->startup->activate->loop; loop->last [label="  user closes"]; last->ret;
+ loop->loop [label=" iterate"];
+}

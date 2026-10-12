@@ -1,0 +1,8 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.2; ranksep=0.5; splines=true;
+ node [width=1.9];
+ w1 [label="window"]; n1 [label="notebook"]; p1 [label="page\ncapture: click, zoom", fillcolor="#DCE7F5"]; s1 [label="scrolled window"]; t [label="text view\n(target)", fillcolor="#FFF6DD", color="#B08A2E"];
+ s2 [label="scrolled window"]; p2 [label="page"]; n2 [label="notebook"]; w2 [label="window"];
+ w1->n1->p1->s1 [label=" capture"]; s1->t [label=" capture"];
+ t->s2 [label=" bubble"]; s2->p2->n2->w2 [label=" bubble"];
+ {rank=same; w1; w2} {rank=same; n1; n2} {rank=same; p1; p2} {rank=same; s1; s2}
+}

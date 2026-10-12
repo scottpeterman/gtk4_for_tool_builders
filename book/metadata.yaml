@@ -1,0 +1,33 @@
+---
+title: "GTK 4 for Tool Builders"
+subtitle: "Building desktop tools with C++17 and GTK 4, one runnable step at a time"
+author: "Scott Peterman"
+date: "First edition, October 2026"
+lang: en-US
+rights: "Text © 2026 Scott Peterman, CC BY-SA 4.0. Code GPL-3.0-or-later."
+documentclass: scrbook
+classoption:
+  - oneside
+  - open=any
+  - fontsize=10.5pt
+papersize: letter
+geometry:
+  - top=0.9in
+  - bottom=0.9in
+  - left=1in
+  - right=1in
+mainfont: "TeX Gyre Pagella"
+sansfont: "IBM Plex Sans"
+monofont: "IBM Plex Mono"
+monofontoptions:
+  - Scale=0.84
+linkcolor: "NavyBlue"
+urlcolor: "NavyBlue"
+toccolor: "black"
+colorlinks: true
+toc: true
+toc-depth: 2
+top-level-division: chapter
+numbersections: false
+highlight-style: tango
+---

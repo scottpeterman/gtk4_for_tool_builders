@@ -17,9 +17,10 @@ AppWindow::AppWindow(GtkApplication *app) {
     install_style();
 
     window_ = gtk_application_window_new(app);
-    // Delete this AppWindow on the window's "destroy": it runs first, while
-    // the widget tree is still whole. (Object data is cleared much later in
-    // dispose, after the children are gone; Chapter 15 ran handlers then.)
+    // Delete this AppWindow on the window's "destroy", emitted when the window
+    // is disposed. Object data would wait for finalization, which comes only
+    // when the last reference goes. Either way some children may already be
+    // gone, so build_ui holds the notebook for ~AppWindow to rely on.
     g_signal_connect(window_, "destroy",
                      G_CALLBACK(+[](GtkWidget *, gpointer self) { delete static_cast<AppWindow *>(self); }),
                      this);
@@ -795,9 +796,13 @@ Tab *AppWindow::current_tab() const {
 // coordinates. The parent must outlive anything the menu can do: Close Tab
 // destroys the tab page, so the terminal menu hangs off the notebook.
 void AppWindow::show_popover(GMenuModel *model, GtkWidget *parent, GtkWidget *from, double x, double y) {
-    double px = 0, py = 0;
-    if (!gtk_widget_translate_coordinates(from, parent, x, y, &px, &py))  // 4.8 API
+    // gtk_widget_compute_point exists in every GTK 4; the older
+    // gtk_widget_translate_coordinates is deprecated from 4.12.
+    const graphene_point_t in = GRAPHENE_POINT_INIT(static_cast<float>(x), static_cast<float>(y));
+    graphene_point_t out;
+    if (!gtk_widget_compute_point(from, parent, &in, &out))
         return;
+    const double px = out.x, py = out.y;
     g_debug("popover: from (%.0f,%.0f) to parent (%.0f,%.0f)", x, y, px, py);
 
     GtkWidget *popover = gtk_popover_menu_new_from_model(model);

@@ -1,0 +1,8 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.45; ranksep=0.4;
+ app [label="GtkApplication"]; win [label="GtkApplicationWindow"]; box [label="GtkBox"];
+ count [label="GtkButton \"Clicked n\"", fillcolor="#DCE7F5"]; remove [label="GtkButton \"Remove counter\""];
+ counter [label="struct Counter\n(C++ object)", fillcolor="#FFFFFF", style="rounded,filled,dashed"];
+ app->win [label=" holds its windows"]; win->box [label=" set_child"]; box->count [label=" append"]; box->remove [label=" append"];
+ count->counter [label=" object data\n destroy fn deletes it"];
+ remove->count [style=dashed, constraint=false, label=" signal_connect_object:\n broken when count goes", color="#B0533C", fontcolor="#B0533C"];
+}

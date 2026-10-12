@@ -1,0 +1,8 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=BT; nodesep=0.5; ranksep=0.45;
+ glib [label="GLib", fillcolor="#FFFFFF"]; gtk [label="GTK 4", fillcolor="#FFFFFF"];
+ core [label="gtklab_core  (static library)\nsrc/core/*  ·  parsing, models, settings", fillcolor="#DCE7F5"];
+ app [label="gtklab  (executable)\nsrc/*  ·  windows, widgets, actions"];
+ tests [label="gtklab-tests  (executable)\ntests/*  ·  doctest"];
+ core->glib; app->core; app->gtk; tests->core; gtk->glib [style=dotted, arrowhead=none];
+ {rank=same; app; tests}
+}

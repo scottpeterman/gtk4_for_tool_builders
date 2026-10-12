@@ -1,0 +1,7 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.45; ranksep=0.5;
+ child [label="child process\nshell or ssh", fillcolor="#FFFFFF"]; pty [label="pty"];
+ sess [label="PtySession\non_readable (idle priority)", fillcolor="#DCE7F5"]; log [label="SessionLog\n(raw bytes)", fillcolor="#FFFFFF"];
+ term [label="GtkpyteTerminal", fillcolor="#DCE7F5"];
+ child->pty [dir=both]; pty->sess [label=" output"]; sess->log [label=" tap"]; sess->term [label=" gtkpyte_terminal_feed"];
+ term->sess [label=" commit (keys, pastes) → write", style=dashed]; term->sess [label=" resized → TIOCSWINSZ", style=dashed];
+}

@@ -755,9 +755,13 @@ Tab *AppWindow::current_tab() const {
 // coordinates. The parent must outlive anything the menu can do: Close Tab
 // destroys the tab page, so the terminal menu hangs off the notebook.
 void AppWindow::show_popover(GMenuModel *model, GtkWidget *parent, GtkWidget *from, double x, double y) {
-    double px = 0, py = 0;
-    if (!gtk_widget_translate_coordinates(from, parent, x, y, &px, &py))  // 4.8 API
+    // gtk_widget_compute_point exists in every GTK 4; the older
+    // gtk_widget_translate_coordinates is deprecated from 4.12.
+    const graphene_point_t in = GRAPHENE_POINT_INIT(static_cast<float>(x), static_cast<float>(y));
+    graphene_point_t out;
+    if (!gtk_widget_compute_point(from, parent, &in, &out))
         return;
+    const double px = out.x, py = out.y;
     g_debug("popover: from (%.0f,%.0f) to parent (%.0f,%.0f)", x, y, px, py);
 
     GtkWidget *popover = gtk_popover_menu_new_from_model(model);

@@ -1,0 +1,6 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=TB; nodesep=0.25; ranksep=0.35;
+ win [label="GtkApplicationWindow"]; hb [label="GtkHeaderBar\n(titlebar)"]; flip [label="GtkButton \"Flip\""];
+ paned [label="GtkPaned"]; side [label="GtkBox (sidebar)"]; search [label="GtkSearchEntry"]; sc [label="GtkScrolledWindow"]; ph [label="GtkLabel (placeholder)", fillcolor="#FFFFFF"];
+ stack [label="GtkStack", fillcolor="#DCE7F5"]; empty [label="GtkLabel \"No tabs open\"\npage \"empty\"", fillcolor="#FFFFFF"]; nb [label="GtkNotebook\npage \"tabs\"", fillcolor="#FFFFFF"];
+ win->hb->flip; win->paned; paned->side [label=" start"]; paned->stack [label=" end"]; side->search; side->sc->ph; stack->empty; stack->nb;
+}

@@ -1,0 +1,6 @@
+digraph G { fontname="IBM Plex Sans"; fontsize=12; bgcolor="transparent"; pad=0.15; node [fontname="IBM Plex Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#EEF2F7", color="#5B6B82", penwidth=1.2, margin="0.18,0.08"]; edge [fontname="IBM Plex Sans", fontsize=10.5, color="#5B6B82", fontcolor="#334155", arrowsize=0.7]; rankdir=LR; nodesep=0.35; ranksep=0.45;
+ store [label="GListStore\nof SessionItem", fillcolor="#DCE7F5"]; sel [label="GtkSingleSelection"]; view [label="GtkListView"];
+ fac [label="GtkSignalListItemFactory\nsetup · bind · unbind", fillcolor="#FFFFFF"];
+ rows [label="a few row widgets,\nreused while scrolling", fillcolor="#FFFFFF", style="rounded,filled,dashed"];
+ store->sel [label=" items"]; sel->view [label=" items + selection"]; view->fac [label=" needs a row"]; fac->rows [label=" creates, fills"];
+}

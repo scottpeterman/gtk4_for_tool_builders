@@ -1,0 +1,32 @@
+% Long code lines wrap instead of running off the page.
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\},fontsize=\footnotesize}
+\usepackage{xcolor}
+\definecolor{shadecolor}{HTML}{F2F4F7}
+% Where an included block came from.
+\newcommand{\codesource}[1]{\par\vspace{2pt}{\sffamily\scriptsize\color{gray}#1}\nopagebreak\par\vspace{-6pt}}
+% Headings in the sans face.
+\addtokomafont{disposition}{\sffamily}
+\addtokomafont{chapter}{\Huge}
+\setkomafont{descriptionlabel}{\sffamily\bfseries}
+% Figures: keep them where they are written.
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {\expandafter\origfigure\expandafter[H]} {\endorigfigure}
+\usepackage{caption}
+\captionsetup{font={small,sf},labelfont=bf}
+% Tables a little tighter.
+\renewcommand{\arraystretch}{1.15}
+% Paragraph spacing rather than indents.
+\KOMAoptions{parskip=half}
+\raggedbottom
+% Boxes for Recall, Debugger drill, Break it, Read in tmssh.
+\usepackage[most]{tcolorbox}
+\definecolor{boxbg}{HTML}{F7F8FA}
+\definecolor{boxframe}{HTML}{C9CED6}
+\definecolor{boxtitle}{HTML}{2B4C7E}
+% Plain page numbers; unnumbered chapters would otherwise leave stale running heads.
+\pagestyle{plain}
+\renewcommand*{\chapterpagestyle}{plain}
+\renewcommand*{\partpagestyle}{empty}
