@@ -1,0 +1,14 @@
+/* gtklab's own styles. Classes from the theme (error, dim-label) need nothing here. */
+
+/* The log indicator: a symbolic icon takes its colour from CSS. */
+image.log-indicator {
+  color: @error_color;
+  -gtk-icon-size: 10px;
+}
+
+/* The sessions-file error banner. */
+label.error.banner {
+  padding: 4px 6px;
+  border-radius: 6px;
+  background-color: alpha(@error_color, 0.12);
+}

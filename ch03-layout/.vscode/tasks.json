@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-debug",
+      "type": "shell",
+      "command": "[ -d build-debug ] || meson setup build-debug --buildtype=debug; meson compile -C build-debug",
+      "problemMatcher": ["$gcc"],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "build-asan",
+      "type": "shell",
+      "command": "[ -d build-asan ] || meson setup build-asan --buildtype=debug -Db_sanitize=address; meson compile -C build-asan",
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}

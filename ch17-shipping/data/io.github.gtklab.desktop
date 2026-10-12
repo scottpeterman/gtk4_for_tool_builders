@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=gtklab
+Comment=Tiny session-manager terminal built while learning GTK 4
+Exec=gtklab
+Icon=utilities-terminal
+Terminal=false
+Categories=System;TerminalEmulator;GTK;
+StartupWMClass=gtklab

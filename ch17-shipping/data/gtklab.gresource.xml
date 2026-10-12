@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Files compiled into the gtklab binary. Add a line when a file is added. -->
+<gresources>
+  <gresource prefix="/io/github/gtklab">
+    <file>style.css</file>
+    <file>themes/dark.ini</file>
+    <file>themes/light.ini</file>
+    <file>themes/nord.ini</file>
+    <file>themes/solarized-dark.ini</file>
+    <file>icons/scalable/actions/gtklab-log-symbolic.svg</file>
+  </gresource>
+</gresources>
